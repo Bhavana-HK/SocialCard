@@ -1,0 +1,14 @@
+{ fieldname: 'card_image',
+  originalname: 'structure of masterjson.png',
+  encoding: '7bit',
+  mimetype: 'image/png',
+  buffer:
+   <Buffer 89 50 4e 47 0d 0a 1a 0a 00 00 00 0d 49 48 44 52 00 00 02 3b 00 00 02 18 08 06 00 00 00 8b ee 2d c3 00 00 07 42 7a 54 58 74 6d 78 47 72 61 70 68 4d 6f ... >,
+  size: 47201 }
+
+  author signes up/in 
+  display his profile info + edit profile button
+  diaplay list of his channels on the home page (with pic, desc etc) +  create channel button
+  on click of one channel, diplay all his cards of that channel + a create card button
+  discover shows all the cards from all the authors
+  on click of other author, he cannot get any of the "create" buttons.
