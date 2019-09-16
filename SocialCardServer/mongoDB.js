@@ -10,7 +10,7 @@ var authorSchema = new Schema({
 	author_username: { type: String, required: [true, "username cannot be empty"], unique: [true, "username not available"] },
 	author_password: { type: String, required: true, minlength: 5, maxlength: 12 },
 	author_about: String,
-	author_email: { type: String, required: true, unique: [true,"account already associated with this email"] },
+	author_email: { type: String, required: true, unique: [true, "account already associated with this email"] },
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } })
 
 var channelSchema = new Schema({
@@ -66,10 +66,28 @@ var mongodb = {}
 mongodb.createAuthor = (data, cb) => {
 	connect((res) => {
 		if (res == "connected") {
-			var authorDocumnet = new Author(data);
-			authorDocumnet.save()
+			var authorDocument = new Author(data);
+			authorDocument.save()
 				.then((res) => { cb(res) })//contains the inserted data
-				.catch((err) => { console.log(err); cb(null,err); })
+				.catch((err) => { console.log(err); cb(null, err); })
+		}
+		else { cb("error") }
+	})
+}
+
+mongodb.modifyAuthor = (data, cb) => {
+	connect((res) => {
+		if (res == "connected") {
+			Author.findOne({ author_id: data.author_id }, (err, authorFetched) => {
+				if (data.author_name) authorFetched.author_name = data.author_name;
+				if (data.author_picture) authorFetched.author_picture = data.author_picture;
+				if (data.author_username) authorFetched.author_username = data.author_username;
+				if (data.author_password) authorFetched.author_password = data.author_password;
+				if (data.author_about) authorFetched.author_about = data.author_about;
+				authorFetched.save()
+					.then((res) => { cb(res) })
+					.catch((err) => { console.log(err); cb(null, err); })
+			});
 		}
 		else { cb("error") }
 	})
@@ -95,14 +113,14 @@ mongodb.createCard = (data, cb) => {
 				.then((res) => {
 					//update the channel as well
 					Channel.findOne({ channel_id: res.card_channel_id }, (err, oldChannel) => {
-						console.log("Channel found! ", JSON.stringify(oldChannel))
-						console.log("old: ", JSON.stringify(oldChannel.channel_cards));
+						//console.log("Channel found! ", JSON.stringify(oldChannel))
+						//console.log("old: ", JSON.stringify(oldChannel.channel_cards));
 						if (oldChannel.channel_cards == undefined) cards = [res.card_id];
 						else cards = [...oldChannel.channel_cards, res.card_id];
-						console.log("new: ", JSON.stringify(cards))
+						//console.log("new: ", JSON.stringify(cards))
 						Channel.findOneAndUpdate({ channel_id: res.card_channel_id }, { $set: { channel_cards: cards } }, { new: true }, (err, updatedChannel) => {
 							if (err) cb("error")
-							console.log("Channel Updated!", JSON.stringify(updatedChannel))
+							//console.log("Channel Updated!", JSON.stringify(updatedChannel))
 						});
 					})
 					cb(res)

@@ -2,48 +2,13 @@ var fs = require('fs')
 var mongodb = require('./mongoDB');
 var util = {}
 
-util.createCard = (cb) => {
-    let data = JSON.parse(` {
-    "card_picture" : {},
-    "card_authod_id" : 1,
-    "card_channel_id" : 1,
-    "card_creation_date" : "",
-    "card_heading" : "Honey beeeee",
-    "card_body" : "Can't pry yourself from the tutorials? The cure is to make tiny little expirement apps.",
-    "card_website" : "dev.to",
-    "card_likes" : {
-        "liked_authors" : [
-            1,
-            3,
-            4,
-            5,
-            6,
-            7,
-            8
-        ],
-        "liked" : "true"
-    },
-    "card_comments" : [
-        {
-            "comment_author" : "bhavana_hk",
-            "comment_content" : "loved the post!"
-        },
-        {
-            "comment_author" : "dave",
-            "comment_content" : "great work ^^"
-        }
-    ],
-    "card_share" : {
-        "share_count" : 20,
-        "shared" : "true"
-    }}`)
-    data.card_picture.content = fs.readFileSync(__dirname + '/resources/honey bee.jpg');
-    data.card_picture.contentType = 'image/jpg';
+util.createCard = (inputData, cb) => {
+    
     //console.log(data.card_picture.content)
-    data.card_creation_date = Date.now();
+    inputData.card_creation_date = Date.now();
     mongodb.getMaxCardId((maxCardId) => {
-        data.card_id = maxCardId + 1;
-        mongodb.createCard(data, (res) => {
+        inputData.card_id = maxCardId + 1;
+        mongodb.createCard(inputData, (res) => {
             cb(res)
         })
     })
@@ -56,7 +21,7 @@ util.createAuthor = (inputData, cb) => {
             if (err) {
                 res = {};
                 res.result = "error";
-                res.data = "Error in creating author"
+                res.data = err.message;
                 cb(res);
             }
             else {
@@ -67,6 +32,24 @@ util.createAuthor = (inputData, cb) => {
                 cb(res)
             }
         })
+    })
+}
+
+util.editAuthor = (inputData, cb) => {
+    mongodb.modifyAuthor(inputData, (res, err) => {
+        if (err) {
+            res = {};
+            res.result = "error";
+            res.data = err.message;
+            cb(res);
+        }
+        else {
+            res = res.toObject();
+            if (res.author_picture && res.author_picture.content) {
+                res.author_picture.content = res.author_picture.content.toString('base64')
+            }
+            cb(res)
+        }
     })
 }
 

@@ -30,18 +30,49 @@ resource.createAuthor = (req, res) => {
             res.end()
         }
     })
-
 }
-resource.createCard = (req, res) => {
-    console.log(req.headers);
-    console.log(req.body)
-    console.log(req.file)
-    util.createCard((createdCard) => {
-        res.writeHead(200, { "Content-Type": "multipart/form-data" });
-        res.write(JSON.stringify(createdCard))
-        res.end()
-    })
 
+resource.editAuthor = (req, res) => {
+    //edit this!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    let inputData = req.body;
+    inputData.author_picture = {}
+    if (!_.isEmpty(req.file)) {
+        inputData.author_picture.content = req.file.buffer;
+        inputData.author_picture.contentType = req.file.mimetype;
+    }
+    util.editAuthor(inputData, (response) => {
+        if (!_.isEmpty(response.result) && response.result == "error") {
+            res.writeHead(400, { "Content-Type": "application/json" });
+            res.write(JSON.stringify(response))
+            res.end()
+        }
+        else {
+            res.writeHead(200, { "Content-Type": "application/json" });
+            res.write(JSON.stringify(response))
+            res.end()
+        }
+    })
+}
+
+resource.createCard = (req, res) => {
+    let inputData = req.body;
+    inputData.card_picture = {}
+    if (!_.isEmpty(req.file)) {
+        inputData.card_picture.content = req.file.buffer;
+        inputData.card_picture.contentType = req.file.mimetype;
+    }
+    util.createCard(inputData, (response) => {
+        if (!_.isEmpty(response.result) && response.result == "error") {
+            res.writeHead(400, { "Content-Type": "application/json" });
+            res.write(JSON.stringify(response))
+            res.end()
+        }
+        else {
+            res.writeHead(200, { "Content-Type": "application/json" });
+            res.write(JSON.stringify(response))
+            res.end()
+        }
+    })
 }
 resource.createChannel = (req, res) => {
     util.createChannel((createdChannel) => {
