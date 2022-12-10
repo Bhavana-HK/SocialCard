@@ -10,7 +10,7 @@
   "author": "bhavana",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "form-data": "^2.5.0",
     "fs": "0.0.1-security",
     "lodash": "^4.17.15",
